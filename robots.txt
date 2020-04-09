@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://fkgk.github.io//sitemap.txt
