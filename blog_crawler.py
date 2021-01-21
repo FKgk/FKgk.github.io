@@ -50,16 +50,23 @@ def get_datetime_now():
     return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S+09:00')
 
 def get_html_lastmod():
-    return f"<lastmod>{get_datetime_now()}</lastmod>\r\n\t</url>\r\n</urlset>"
+    now = get_datetime_now()
+    return now, f"<lastmod>{now}</lastmod>\r\n\t</url>\r\n</urlset>"
 
 def update_sitemap():
-     with open("sitemap.xml", "rb+") as f_sitemap:
-            f_sitemap.seek(-64, 2)
-            f_sitemap.write(get_html_lastmod().encode())
+    now, datetime_now = get_html_lastmod()
+    
+    with open("sitemap.xml", "rb+") as f_sitemap:
+    	f_sitemap.seek(-64, 2)
+    	f_sitemap.write(datetime_now.encode())
+
+    repo.index.add(['sitemap.xml'])
+    repo.index.commit(f"{now}")
 
 def git_add(msg):
     repo.index.add(['urls.html', 'logs.txt'])
     repo.index.commit(f"add {msg}")
+    
     print(f"add {msg}")
 
 def git_push():
@@ -87,6 +94,6 @@ if __name__ == '__main__':
             git_add(title)
         else:
             break
-        
+    
     update_sitemap()
     git_push()
